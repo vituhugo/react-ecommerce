@@ -1,7 +1,8 @@
 import React from 'react'
 import api from '../../api/ecommerce';
+import { withRouter } from 'react-router-dom';
 
-export default class Login extends React.Component {
+class Login extends React.Component {
 
     constructor(props) {
         super(props)
@@ -33,19 +34,23 @@ export default class Login extends React.Component {
         api.get("/perfil").then(response => {
             sessionStorage.setItem("usuario", JSON.stringify(response.data))
             this.props.history.push("/");
+            this.props.onLogar(response.data);
         }).catch(error => {
-            if (401 === error.response.status) {
+            sessionStorage.removeItem("credenciais")
+            if (error.response && 401 === error.response.status) {
                 return alert("Usuário ou senha não conferem");
             }
             alert("Erro não esperado");
+            console.error(error);
+            return error;
         });
     }
 
     render() {
         return (
-        <div onSubmit={this.handleSubmit}>
+        <div>
             <h2>Formulário de Login</h2>
-            <form>
+            <form onSubmit={this.handleSubmit}>
                 <div>
                     <label>Username</label>
                     <input name="username" type="text" value={this.state.form.username} onChange={this.handleInput} />
@@ -60,3 +65,5 @@ export default class Login extends React.Component {
         )
     }
 }
+
+export default withRouter(Login);

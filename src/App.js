@@ -6,15 +6,17 @@ import "materialize-css/dist/css/materialize.min.css";
 import MainNav from './components/main_nav';
 import {
   BrowserRouter as Router,
-  Link,
   Route,
   Switch,
-  Redirect
 } from 'react-router-dom'
 class App extends Component {
 
   constructor(props) {
     super(props)
+
+    this.state = {
+      usuario: null
+    }
   }
   
   handleLogoutClick = (e) => {
@@ -25,16 +27,30 @@ class App extends Component {
 
     this.props.history.push("/login");
   }
+
+  handleLogar = (usuario) => {
+    this.setState({
+      usuario
+    });
+  }
+
+  handleLogout = () => {
+    this.setState({
+      usuario: null
+    })
+  }
   render() {
     return (
         <div className="App">
             <Router>
-              <MainNav />
+              <MainNav usuario={this.state.usuario} onLogout={this.handleLogout} />
               <div className="container">
                 <Switch>
                   <Route exact path="/" component={Home}></Route>
                   <Route exact path="/clientes" component={Clientes}></Route>
-                  <Route exact path="/login" component={Login}></Route>
+                  <Route exact path="/login">
+                    <Login onLogar={this.handleLogar} />
+                  </Route>
                 </Switch>
               </div>
             </Router>
